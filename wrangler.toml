@@ -8,3 +8,7 @@ id = "7750db481af74240a874f7b8862c73ef"
 
 [triggers]
 crons = ["*/5 * * * *"] # run every 5 minutes
+
+[observability.logs]
+enabled = true
+
