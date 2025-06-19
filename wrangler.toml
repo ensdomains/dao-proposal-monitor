@@ -1,6 +1,6 @@
 name = "dao-proposal-monitor"
 main = "src/worker.ts"
-compatibility_date = "2023-05-15"
+compatibility_date = "2025-05-25"
 
 [[kv_namespaces]]
 binding = "PROPOSALS"
