@@ -61,7 +61,7 @@ export default {
 
       const message = messageParts.join('\n');
       await telegram.sendMessage(message);
-      await github.addProposal({ author, id, markdown, title });
+      await github.addProposal({ author, id, markdown, title, type: 'executable' });
       console.log(`Processed proposal ${id}`);
 
       // Save proposal to KV
@@ -91,7 +91,7 @@ export default {
 
       const message = messageParts.join('\n');
       await telegram.sendMessage(message);
-      await github.addProposal({ author, id, markdown, title });
+      await github.addProposal({ author, id, markdown, title, type: 'social' });
       console.log(`Processed Snapshot proposal ${id}`);
 
       // Save proposal to KV

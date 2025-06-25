@@ -5,30 +5,21 @@ import mdParser from 'prettier/plugins/markdown';
 
 import { Env } from './worker';
 
-type AddProposalParams = {
+type Proposal = {
   author: string;
   id: bigint | string;
   markdown: string;
   title: string | null;
+  type: 'executable' | 'social';
 };
 
-type CreateFileParams = {
-  author: string;
-  branch: string;
-  ep: string;
-  markdown: string;
-  title: string | null;
-};
-
-type OpenPullRequestParams = {
+type GitParams = {
   branch: string;
   ep: string;
 };
 
-type FormatFileParams = {
-  author: string;
-  markdown: string;
-  title: string | null;
+type GitParamsWithProposal = GitParams & {
+  proposal: Proposal;
 };
 
 export class GitHub {
@@ -54,13 +45,13 @@ export class GitHub {
     }
   }
 
-  async addProposal({ author, id, markdown, title }: AddProposalParams) {
-    const branch = `prop/${id}`;
+  async addProposal(proposal: Proposal) {
+    const branch = `prop/${proposal.id}`;
     const ep = await this.assignNumber();
     const createdBranch = await this.createBranch(branch);
 
     if (createdBranch) {
-      await this.createFile({ author, branch, markdown, ep, title });
+      await this.createFile({ branch, ep, proposal });
       const pr = await this.openPullRequest({ branch, ep });
       console.log(`Created PR ${pr.data.html_url}`);
     }
@@ -92,19 +83,21 @@ export class GitHub {
   }
 
   // Creates a new file in the configured user's repo
-  private async createFile({ author, branch, ep, markdown, title }: CreateFileParams) {
+  private async createFile({ branch, ep, proposal }: GitParamsWithProposal) {
+    const { author, id, markdown, title, type } = proposal;
+
     return this.octokit.rest.repos.createOrUpdateFileContents({
       owner: this.owner,
       repo: this.repo,
       path: `src/pages/dao/proposals/${ep}.mdx`,
       message: `Add EP ${ep}`,
-      content: await this.formatFile({ author, markdown, title }),
+      content: await this.formatFile({ author, id, markdown, title, type }),
       branch,
     });
   }
 
   // Opens a pull request from the configured user's repo to the ENS docs repo
-  private async openPullRequest({ branch, ep }: OpenPullRequestParams) {
+  private async openPullRequest({ branch, ep }: GitParams) {
     return this.octokit.rest.pulls.create({
       owner: this.upstreamOwner,
       repo: this.upstreamRepo,
@@ -155,10 +148,26 @@ export class GitHub {
   }
 
   // Wraps the proposal's markdown in the ENS docs formatting, applies prettier, etc.
-  private async formatFile({ author, markdown, title }: FormatFileParams) {
+  private async formatFile({ author, id, markdown, title, type }: Proposal) {
     if (title) {
-      // Under the first title, add `::authors`
-      markdown = markdown.replace(title, `${title}\n\n::authors\n`);
+      // Under the first title, add authors and status info
+      let metadataTable: string;
+
+      if (type === 'executable') {
+        metadataTable = `
+| **Status**            | Active                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Discussion Thread** | [Forum](https://discuss.ens.domains/t/)                                                                 |
+| **Votes**             | [Agora](https://agora.ensdao.org/proposals/${id}), [Tally](https://tally.ensdao.org/dao/proposal/${id}) |`;
+      } else {
+        metadataTable = `
+| **Status**            | Active                                                      |
+| --------------------- | ----------------------------------------------------------- |
+| **Discussion Thread** | [Forum](https://discuss.ens.domains/t/)                     |
+| **Votes**             | [Snapshot](https://snapshot.box/#/s:ens.eth/proposal/${id}) |`;
+      }
+
+      markdown = markdown.replace(title, `${title}\n\n::authors\n\n${metadataTable}\n`);
     }
 
     // Add frontmatter
@@ -166,7 +175,7 @@ export class GitHub {
 authors:
   - ${author}
 proposal:
-  type: 'executable'
+  type: '${type}'
 ---
 
 ${markdown}`;
