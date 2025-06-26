@@ -12,13 +12,17 @@ To set this up, you'll need an Ethereum Mainnet RPC endpoint, a Telegram bot, an
 2. Create a Telegram channel and visit it on [web.telegram.org](https://web.telegram.org/). Use the value after `-100` in the URL. For example, the [ENS DAO Notifications](https://t.me/ensdao_notifications) channel has the URL `https://web.telegram.org/a/#-1001934911549`, so the ID is `1934911549`.
 3. Create a new [GitHub personal access token](https://github.com/settings/tokens) (classic) with the "public_repo" scope. Fork the [ENS docs repo](https://github.com/ensdomains/docs), which will be used as the base for PRs.
 
-The following variables need to be configured in the Cloudflare dashboard:
+The following public variables should be set in the `wrangler.toml` file:
 
-- `TELEGRAM_TOKEN`
-- `TELEGRAM_CHANNEL_ID`
-- `GITHUB_TOKEN`
-- `GITHUB_REPO_OWNER`
 - `GITHUB_REPO_NAME`
+- `GITHUB_REPO_OWNER`
+- `TELEGRAM_CHANNEL_ID`
+
+The following secrets should be set in the Cloudflare dashboard:
+
+- `ETH_RPC`
+- `GITHUB_TOKEN`
+- `TELEGRAM_TOKEN`
 
 ## Development
 
