@@ -54,7 +54,7 @@ export default {
       if (title) {
         // Push the title to the beginning of the message with an extra line break
         messageParts.unshift('');
-        messageParts.unshift(`*New Executable Proposal*: ${title}`);
+        messageParts.unshift(`*New Executable Proposal*: ${title.replace('[Executable] ', '')}`);
       } else {
         messageParts.unshift(`*New Executable Proposal*`);
       }
@@ -80,7 +80,7 @@ export default {
       const author = ensName || truncateAddress(proposer);
 
       const messageParts = [
-        `*New Social Proposal*: ${title}`,
+        `*New Social Proposal*: ${title.replace('[Social] ', '')}`,
         '',
         `Proposer: ${author}`,
         `Vote on [Snapshot](https://snapshot.box/#/s:ens.eth/proposal/${id})`,
