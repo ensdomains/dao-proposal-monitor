@@ -91,7 +91,7 @@ export class GitHub {
       repo: this.repo,
       path: `src/pages/dao/proposals/${ep}.mdx`,
       message: `Add EP ${ep}`,
-      content: await this.formatFile({ author, id, markdown, title, type }),
+      content: await this.formatFile({ author, ep, id, markdown, title, type }),
       branch,
     });
   }
@@ -137,9 +137,9 @@ export class GitHub {
     let nextProposalNumber: number;
 
     if (currentTerm === 6) {
-      // Bump the proposal number up 1 while we're in Term 6, since this system is getting adopted partway through the term
+      // We have custom logic for Term 6 because there are sub-proposals like 6.6.1 and 6.6.2
       // (Safe to remove this after Jan 1, 2026)
-      nextProposalNumber = currentTermProposalCount + 2;
+      nextProposalNumber = currentTermProposalCount;
     } else {
       nextProposalNumber = currentTermProposalCount + 1;
     }
@@ -148,7 +148,7 @@ export class GitHub {
   }
 
   // Wraps the proposal's markdown in the ENS docs formatting, applies prettier, etc.
-  private async formatFile({ author, id, markdown, title, type }: Proposal) {
+  private async formatFile({ author, ep, id, markdown, title, type }: Proposal & { ep: string }) {
     if (title) {
       // Under the first title, add authors and status info
       let metadataTable: string;
@@ -157,7 +157,7 @@ export class GitHub {
         metadataTable = `
 | **Status**            | Active                                                                                                  |
 | --------------------- | ------------------------------------------------------------------------------------------------------- |
-| **Discussion Thread** | [Forum](https://discuss.ens.domains/t/)                                                                 |
+| **Discussion Thread** | [Forum](https://discuss.ens.domains/t/)                                                           |
 | **Votes**             | [Agora](https://agora.ensdao.org/proposals/${id}), [Tally](https://tally.ensdao.org/dao/proposal/${id}) |`;
       } else {
         metadataTable = `
@@ -167,7 +167,7 @@ export class GitHub {
 | **Votes**             | [Snapshot](https://snapshot.box/#/s:ens.eth/proposal/${id}) |`;
       }
 
-      markdown = markdown.replace(title, `${title}\n\n::authors\n\n${metadataTable}\n`);
+      markdown = markdown.replace(title, `[EP ${ep}] ${title}\n\n::authors\n\n${metadataTable}\n`);
     }
 
     // Add frontmatter
