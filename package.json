@@ -18,6 +18,6 @@
   "dependencies": {
     "@octokit/rest": "^22.0.0",
     "marked": "^15.0.12",
-    "viem": "^2.30.6"
+    "viem": "^2.38.4"
   }
 }
