@@ -111,10 +111,8 @@ export class GitHub {
 
   // Assigns a number to the proposal
   private async assignNumber() {
-    // Get the current term
+    // Get the current term (each term is 1 year long, starting on the first of the year)
     const [startingYear, startingTerm] = [2025, 6];
-
-    // Each term is 1 year long, starting on the first of the year
     const currentYear = new Date().getFullYear();
     const currentTerm = Math.floor((currentYear - startingYear) / 1) + startingTerm;
 
@@ -139,7 +137,7 @@ export class GitHub {
     if (currentTerm === 6) {
       // We have custom logic for Term 6 because there are sub-proposals like 6.6.1 and 6.6.2
       // (Safe to remove this after Jan 1, 2026)
-      nextProposalNumber = currentTermProposalCount;
+      nextProposalNumber = currentTermProposalCount - 2;
     } else {
       nextProposalNumber = currentTermProposalCount + 1;
     }
