@@ -1,6 +1,7 @@
 import { createViemClient, getRecentLogs, truncateAddress } from './eth';
 import { GitHub } from './github';
 import { extractTitle } from './markdown';
+import { sendSlackMessage } from './slack';
 import { getSnapshotProposals } from './snapshot';
 import { Telegram } from './telegram';
 
@@ -19,6 +20,9 @@ export interface Env {
 
   // Ethereum
   ETH_RPC?: string;
+
+  // Slack
+  SLACK_WEBHOOK_URL?: string;
 
   // Misc
   IS_DEV: boolean;
@@ -45,11 +49,9 @@ export default {
       const title = extractTitle(markdown);
       const ensName = await client.getEnsName({ address: proposer });
       const author = ensName || truncateAddress(proposer);
+      const link = `https://www.tally.xyz/gov/ens/proposal/${id}`;
 
-      const messageParts = [
-        `Proposer: ${author}`,
-        `Vote on [Tally](https://www.tally.xyz/gov/ens/proposal/${id}) or [Agora](https://agora.ensdao.org/proposals/${id})`,
-      ];
+      const messageParts = [`Proposer: ${author}`, `Vote on [Tally](${link}) or [Agora](https://agora.ensdao.org/proposals/${id})`];
 
       if (title) {
         // Push the title to the beginning of the message with an extra line break
@@ -62,6 +64,7 @@ export default {
       const message = messageParts.join('\n');
       await telegram.sendMessage(message);
       await github.addProposal({ author, id, markdown, title, type: 'executable' });
+      await sendSlackMessage({ title: title || 'Unknown title', author, link }, env);
       console.log(`Processed proposal ${id}`);
 
       // Save proposal to KV
@@ -78,12 +81,13 @@ export default {
 
       const ensName = await client.getEnsName({ address: proposer });
       const author = ensName || truncateAddress(proposer);
+      const link = `https://snapshot.box/#/s:ens.eth/proposal/${id}`;
 
       const messageParts = [
         `*New Social Proposal*: ${title.replace('[Social] ', '')}`,
         '',
         `Proposer: ${author}`,
-        `Vote on [Snapshot](https://snapshot.box/#/s:ens.eth/proposal/${id})`,
+        `Vote on [Snapshot](${link})`,
       ];
 
       // Add the title in markdown to the beginning of the body to match onchain proposals
@@ -92,6 +96,7 @@ export default {
       const message = messageParts.join('\n');
       await telegram.sendMessage(message);
       await github.addProposal({ author, id, markdown, title, type: 'social' });
+      await sendSlackMessage({ title, author, link }, env);
       console.log(`Processed Snapshot proposal ${id}`);
 
       // Save proposal to KV

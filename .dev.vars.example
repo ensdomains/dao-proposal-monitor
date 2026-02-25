@@ -10,5 +10,8 @@ GITHUB_REPO_NAME=
 # Ethereum
 ETH_RPC=
 
+# Slack
+SLACK_WEBHOOK_URL=
+
 # Misc
 IS_DEV=
