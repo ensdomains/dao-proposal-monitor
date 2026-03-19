@@ -51,7 +51,7 @@ export default {
       const author = ensName || truncateAddress(proposer);
       const link = `https://www.tally.xyz/gov/ens/proposal/${id}`;
 
-      const messageParts = [`Proposer: ${author}`, `Vote on [Tally](${link}) or [Agora](https://agora.ensdao.org/proposals/${id})`];
+      const messageParts = [`Proposer: ${author}`, `Vote on [Anticapture](https://app.anticapture.com/ens/governance/proposal/${id}), [Tally](${link}), or [Agora](https://agora.ensdao.org/proposals/${id})`];
 
       if (title) {
         // Push the title to the beginning of the message with an extra line break
