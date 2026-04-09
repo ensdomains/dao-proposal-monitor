@@ -49,9 +49,12 @@ export default {
       const title = extractTitle(markdown);
       const ensName = await client.getEnsName({ address: proposer });
       const author = ensName || truncateAddress(proposer);
-      const link = `https://www.tally.xyz/gov/ens/proposal/${id}`;
+      const link = `https://vote.ensdao.org/#/onchain/${id}`;
 
-      const messageParts = [`Proposer: ${author}`, `Vote on [Tally](${link}), [Agora](https://agora.ensdao.org/proposals/${id}) or [Anticapture](https://app.anticapture.com/ens/governance/proposal/${id})`];
+      const messageParts = [
+        `Proposer: ${author}`,
+        `Vote on [Snapshot](${link}) or [Anticapture](https://app.anticapture.com/ens/governance/proposal/${id})`,
+      ];
 
       if (title) {
         // Push the title to the beginning of the message with an extra line break
@@ -81,7 +84,7 @@ export default {
 
       const ensName = await client.getEnsName({ address: proposer });
       const author = ensName || truncateAddress(proposer);
-      const link = `https://snapshot.box/#/s:ens.eth/proposal/${id}`;
+      const link = `https://vote.ensdao.org/#/offchain/${id}`;
 
       const messageParts = [
         `*New Social Proposal*: ${title.replace('[Social] ', '')}`,

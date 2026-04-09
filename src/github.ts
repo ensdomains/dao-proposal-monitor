@@ -153,16 +153,16 @@ export class GitHub {
 
       if (type === 'executable') {
         metadataTable = `
-| **Status**            | Active                                                                                                  |
-| --------------------- | ------------------------------------------------------------------------------------------------------- |
-| **Discussion Thread** | [Forum](https://discuss.ens.domains/t/)                                                           |
-| **Votes**             | [Agora](https://agora.ensdao.org/proposals/${id}), [Tally](https://tally.ensdao.org/dao/proposal/${id}) |`;
+| **Status**            | Active                                                                                                                        |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Discussion Thread** | [Forum](https://discuss.ens.domains/t/)                                                                                       |
+| **Votes**             | [Snapshot](https://vote.ensdao.org/#/onchain/${id}), [Anticapture](https://app.anticapture.com/ens/governance/proposal/${id}) |`;
       } else {
         metadataTable = `
-| **Status**            | Active                                                      |
-| --------------------- | ----------------------------------------------------------- |
-| **Discussion Thread** | [Forum](https://discuss.ens.domains/t/)                     |
-| **Votes**             | [Snapshot](https://snapshot.box/#/s:ens.eth/proposal/${id}) |`;
+| **Status**            | Active                                               |
+| --------------------- | ---------------------------------------------------- |
+| **Discussion Thread** | [Forum](https://discuss.ens.domains/t/)              |
+| **Votes**             | [Snapshot](https://vote.ensdao.org/#/offchain/${id}) |`;
       }
 
       markdown = markdown.replace(title, `[EP ${ep}] ${title}\n\n::authors\n\n${metadataTable}\n`);
